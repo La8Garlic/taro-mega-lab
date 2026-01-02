@@ -1,13 +1,12 @@
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import PageContainer from '../../components/PageContainer'
-import NavCard from '../../components/NavCard'
+import { PageContainer, NavCard, Section } from '../../components'
 import './index.scss'
 
 export default function Home() {
-  const goToDetail = (id: number, title: string) => {
+  const goToDetail = () => {
     Taro.navigateTo({
-      url: `/pages/detail/index?id=${id}&title=${encodeURIComponent(title)}`
+      url: `/pages/detail/index?id=1&title=${encodeURIComponent('测试标题')}`
     })
   }
 
@@ -17,26 +16,38 @@ export default function Home() {
     })
   }
 
+  const goToComponents = () => {
+    Taro.switchTab({ url: '/pages/components/index' })
+  }
+
   return (
     <PageContainer>
       <Text className='page-title'>首页 - 入口与导航</Text>
-      <View className='nav-list'>
-        <NavCard
-          title='详情页演示 1'
-          description='id=1, 测试标题'
-          onClick={() => goToDetail(1, '测试标题')}
-        />
-        <NavCard
-          title='详情页演示 2'
-          description='id=2, 另一个标题'
-          onClick={() => goToDetail(2, '另一个标题')}
-        />
-        <NavCard
-          title='设置页'
-          description='应用设置'
-          onClick={goToSettings}
-        />
-      </View>
+
+      <Section title='功能演示'>
+        <View className='nav-list'>
+          <NavCard
+            title='详情页演示'
+            description='路由传参演示'
+            onClick={goToDetail}
+          />
+          <NavCard
+            title='设置'
+            description='应用设置与配置'
+            onClick={goToSettings}
+          />
+        </View>
+      </Section>
+
+      <Section title='组件库'>
+        <View className='nav-list'>
+          <NavCard
+            title='组件展示'
+            description='查看所有可用组件及使用示例'
+            onClick={goToComponents}
+          />
+        </View>
+      </Section>
     </PageContainer>
   )
 }

@@ -1,0 +1,15 @@
+.section {
+  margin-top: 48px;
+
+  &-title {
+    display: block;
+    font-size: 32px; /* $font-size-md */
+    font-weight: 600; /* $font-weight-medium */
+    color: #333; /* $text-color-primary */
+    margin-bottom: 20px; /* $spacing-lg */
+  }
+
+  &-content {
+    /* 内容区域的样式由具体使用场景决定 */
+  }
+}
