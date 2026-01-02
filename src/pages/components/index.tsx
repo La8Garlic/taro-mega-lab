@@ -1,5 +1,5 @@
 import { View, Text } from '@tarojs/components'
-import { PageContainer, AppCard, AppButton } from '../../components'
+import { PageContainer, AppCard, AppButton, Section } from '../../components'
 import Taro from '@tarojs/taro'
 import './index.scss'
 
@@ -19,8 +19,7 @@ export default function Components() {
     <PageContainer>
       <Text className='page-title'>组件 - 组件/布局展示</Text>
 
-      <View className='section'>
-        <Text className='section-title'>基础组件</Text>
+      <Section title='基础组件'>
         <View className='card-list'>
           <AppCard
             title='PageContainer'
@@ -38,10 +37,9 @@ export default function Components() {
             onClick={() => handleCardClick('AppCard')}
           />
         </View>
-      </View>
+      </Section>
 
-      <View className='section'>
-        <Text className='section-title'>按钮组件</Text>
+      <Section title='按钮组件'>
         <View className='button-group'>
           <AppButton
             text='主要按钮'
@@ -76,7 +74,7 @@ export default function Components() {
             loading
           />
         </View>
-      </View>
+      </Section>
     </PageContainer>
   )
 }
