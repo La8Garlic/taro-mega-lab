@@ -87,9 +87,17 @@ taro-mega-lab/
 │   ├── prod.ts         # 生产环境配置
 │   └── index.ts        # 主配置文件
 ├── src/                # 源代码目录
-│   ├── app.config.ts   # 应用配置
 │   ├── app.tsx         # 应用入口
-│   └── pages/          # 页面目录
+│   ├── app.config.ts   # 应用配置
+│   ├── app.scss        # 全局样式
+│   ├── pages/          # 页面目录
+│   ├── subpackages/    # 分包目录
+│   ├── components/     # 公共组件
+│   ├── services/       # request 封装、API
+│   ├── store/          # 轻量状态（后面加）
+│   ├── utils/          # 工具函数
+│   ├── assets/         # 静态资源
+│   └── types/          # TypeScript 类型定义
 ├── dist/               # 编译输出目录
 ├── node_modules/       # 依赖包
 └── package.json        # 项目配置
