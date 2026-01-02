@@ -45,14 +45,22 @@ export default defineAppConfig({
         pagePath: 'pages/home/index',
         /** 按钮文字 */
         text: '首页',
+        /** 未选中图标 */
+        iconPath: 'assets/images/tabbar/home.png',
+        /** 选中图标 */
+        selectedIconPath: 'assets/images/tabbar/home-active.png',
       },
       {
         pagePath: 'pages/category/index',
         text: '分类',
+        iconPath: 'assets/images/tabbar/category.png',
+        selectedIconPath: 'assets/images/tabbar/category-active.png',
       },
       {
         pagePath: 'pages/profile/index',
         text: '我的',
+        iconPath: 'assets/images/tabbar/profile.png',
+        selectedIconPath: 'assets/images/tabbar/profile-active.png',
       },
     ],
   },
