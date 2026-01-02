@@ -1,11 +1,19 @@
 /**
  * 工具函数库
+ * @description 提供常用的工具函数
  */
 
 /**
  * 格式化日期
- * @param date 日期对象或时间戳
- * @param format 格式化模板，默认 'YYYY-MM-DD HH:mm:ss'
+ * @param date - 日期对象、时间戳或日期字符串
+ * @param format - 格式化模板，默认 'YYYY-MM-DD HH:mm:ss'
+ * @returns 格式化后的日期字符串
+ *
+ * @example
+ * ```ts
+ * formatDate(new Date(), 'YYYY-MM-DD') // '2026-01-02'
+ * formatDate(1704192000000) // '2026-01-02 12:00:00'
+ * ```
  */
 export function formatDate(
   date: Date | number | string,
@@ -30,8 +38,17 @@ export function formatDate(
 
 /**
  * 防抖函数
- * @param fn 要执行的函数
- * @param delay 延迟时间（ms）
+ * @template T - 函数类型
+ * @param fn - 要执行的函数
+ * @param delay - 延迟时间（毫秒）
+ * @returns 防抖处理后的函数
+ *
+ * @example
+ * ```ts
+ * const debouncedSearch = debounce((value: string) => {
+ *   console.log('搜索:', value)
+ * }, 300)
+ * ```
  */
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
@@ -49,8 +66,17 @@ export function debounce<T extends (...args: any[]) => any>(
 
 /**
  * 节流函数
- * @param fn 要执行的函数
- * @param delay 节流时间（ms）
+ * @template T - 函数类型
+ * @param fn - 要执行的函数
+ * @param delay - 节流时间（毫秒）
+ * @returns 节流处理后的函数
+ *
+ * @example
+ * ```ts
+ * const throttledScroll = throttle(() => {
+ *   console.log('滚动位置')
+ * }, 200)
+ * ```
  */
 export function throttle<T extends (...args: any[]) => any>(
   fn: T,
@@ -69,7 +95,15 @@ export function throttle<T extends (...args: any[]) => any>(
 
 /**
  * 深拷贝
- * @param obj 要拷贝的对象
+ * @template T - 对象类型
+ * @param obj - 要拷贝的对象
+ * @returns 深拷贝后的新对象
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1, b: { c: 2 } }
+ * const cloned = deepClone(obj)
+ * ```
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj
@@ -78,16 +112,24 @@ export function deepClone<T>(obj: T): T {
   if (obj instanceof Object) {
     const clonedObj: any = {}
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = deepClone(obj[key])
       }
     }
     return clonedObj
   }
+  // 不应该到达这里，但为了类型安全，返回原值
+  return obj
 }
 
 /**
  * 生成唯一 ID
+ * @returns UUID 格式的唯一标识符
+ *
+ * @example
+ * ```ts
+ * uuid() // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+ * ```
  */
 export function uuid(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
