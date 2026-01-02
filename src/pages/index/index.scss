@@ -1,0 +1,213 @@
+/**
+ * 首页样式
+ * @description 引入全局主题变量并应用到首页组件
+ */
+@use '../../app.scss' as *;
+
+.index-page {
+  min-height: 100vh;
+  background-color: $bg-color-page;
+  padding: $spacing-lg;
+  box-sizing: border-box;
+}
+
+.header {
+  text-align: center;
+  padding: $spacing-xl 0;
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  display: block;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $text-color-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.subtitle {
+  display: block;
+  font-size: $font-size-base;
+  color: $text-color-secondary;
+}
+
+.section {
+  background-color: $bg-color-card;
+  border-radius: $radius-base;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-sm;
+}
+
+.section-title {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $text-color-primary;
+  margin-bottom: $spacing-md;
+}
+
+// 品牌色展示
+.color-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.color-item {
+  flex: 1;
+  min-width: 140px;
+  height: 80px;
+  border-radius: $radius-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.primary {
+    background-color: $primary-color;
+  }
+
+  &.success {
+    background-color: $success-color;
+  }
+
+  &.warning {
+    background-color: $warning-color;
+  }
+
+  &.error {
+    background-color: $error-color;
+  }
+
+  &.text-primary {
+    background-color: $text-color-primary;
+  }
+
+  &.text-secondary {
+    background-color: $text-color-secondary;
+  }
+
+  &.border-base {
+    background-color: $border-color-base;
+  }
+}
+
+.color-label {
+  font-size: $font-size-sm;
+  color: #fff;
+
+  &.dark {
+    color: $text-color-primary;
+  }
+}
+
+// 字号展示
+.text-xs,
+.text-sm,
+.text-base,
+.text-md,
+.text-lg,
+.text-xl {
+  display: block;
+  margin-bottom: $spacing-sm;
+  color: $text-color-primary;
+}
+
+.text-xs {
+  font-size: $font-size-xs;
+}
+
+.text-sm {
+  font-size: $font-size-sm;
+}
+
+.text-base {
+  font-size: $font-size-base;
+}
+
+.text-md {
+  font-size: $font-size-md;
+}
+
+.text-lg {
+  font-size: $font-size-lg;
+}
+
+.text-xl {
+  font-size: $font-size-xl;
+}
+
+// 间距展示
+.spacing-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+.spacing-box {
+  background-color: $primary-color;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+
+  &.xs {
+    width: 32px;
+    height: 32px;
+  }
+
+  &.sm {
+    width: 48px;
+    height: 48px;
+  }
+
+  &.md {
+    width: 64px;
+    height: 64px;
+  }
+
+  &.lg {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+// 圆角展示
+.radius-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.radius-box {
+  width: 64px;
+  height: 64px;
+  background-color: $primary-color;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+
+  &.sm {
+    border-radius: $radius-sm;
+  }
+
+  &.base {
+    border-radius: $radius-base;
+  }
+
+  &.md {
+    border-radius: $radius-md;
+  }
+
+  &.lg {
+    border-radius: $radius-lg;
+  }
+
+  &.round {
+    border-radius: $radius-round;
+    width: 64px;
+  }
+}
