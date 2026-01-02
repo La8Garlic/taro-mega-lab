@@ -1,0 +1,27 @@
+.app-card {
+  padding: 24px; /* $spacing-xl */
+  background: #fff; /* $bg-color-card */
+  border-radius: 12px; /* $radius-md */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* $shadow-sm */
+  transition: all 0.2s; /* $animation-duration-fast */
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+
+  &-title {
+    display: block;
+    font-size: 32px; /* $font-size-md */
+    font-weight: 600; /* $font-weight-medium */
+    color: #333; /* $text-color-primary */
+    margin-bottom: 8px; /* $spacing-xs */
+  }
+
+  &-desc {
+    display: block;
+    font-size: 28px; /* $font-size-base */
+    color: #666; /* $text-color-secondary */
+    line-height: 1.5; /* $line-height-base */
+  }
+}
