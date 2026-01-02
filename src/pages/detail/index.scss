@@ -1,7 +1,12 @@
-/* 使用全局 .page-title 和 .param-item 样式 */
+/* 使用全局 .page-title 样式 */
 
 .params {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.actions {
+  margin-top: 24px;
 }
