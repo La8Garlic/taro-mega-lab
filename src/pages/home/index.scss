@@ -1,15 +1,9 @@
-.home {
-  padding: 40px;
+/* 使用全局 .page-title 样式 */
 
-  .title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 40px;
 }
+

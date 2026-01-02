@@ -1,5 +1,7 @@
-import { View, Text, Button } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
+import PageContainer from '../../components/PageContainer'
+import NavCard from '../../components/NavCard'
 import './index.scss'
 
 export default function Home() {
@@ -16,13 +18,25 @@ export default function Home() {
   }
 
   return (
-    <View className='home'>
-      <Text className='title'>首页 - 入口与导航</Text>
+    <PageContainer>
+      <Text className='page-title'>首页 - 入口与导航</Text>
       <View className='nav-list'>
-        <Button onClick={() => goToDetail(1, '测试标题')}>跳转详情页 (id=1)</Button>
-        <Button onClick={() => goToDetail(2, '另一个标题')}>跳转详情页 (id=2)</Button>
-        <Button onClick={goToSettings}>跳转设置页</Button>
+        <NavCard
+          title='详情页演示 1'
+          description='id=1, 测试标题'
+          onClick={() => goToDetail(1, '测试标题')}
+        />
+        <NavCard
+          title='详情页演示 2'
+          description='id=2, 另一个标题'
+          onClick={() => goToDetail(2, '另一个标题')}
+        />
+        <NavCard
+          title='设置页'
+          description='应用设置'
+          onClick={goToSettings}
+        />
       </View>
-    </View>
+    </PageContainer>
   )
 }

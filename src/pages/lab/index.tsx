@@ -1,10 +1,11 @@
-import { View, Text } from '@tarojs/components'
+import { Text } from '@tarojs/components'
+import PageContainer from '../../components/PageContainer'
 import './index.scss'
 
 export default function Lab() {
   return (
-    <View className='lab'>
-      <Text>实验室 - 实验场入口（跳分包）</Text>
-    </View>
+    <PageContainer>
+      <Text className='page-title'>实验室 - 实验场入口（跳分包）</Text>
+    </PageContainer>
   )
 }
