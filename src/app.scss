@@ -1,0 +1,167 @@
+/**
+ * 全局主题变量
+ * @description 定义应用的颜色、字体、间距等设计规范
+ */
+
+// ========== 颜色系统 ==========
+
+/** 品牌色 - 主色 */
+$primary-color: #007aff;
+
+/** 品牌色 - 成功 */
+$success-color: #34c759;
+
+/** 品牌色 - 警告 */
+$warning-color: #ff9500;
+
+/** 品牌色 - 错误 */
+$error-color: #ff3b30;
+
+/** 品牌色 - 信息 */
+$info-color: #5ac8fa;
+
+// ========== 中性色 ==========
+
+/** 文本 - 主要 */
+$text-color-primary: #000000;
+
+/** 文本 - 次要 */
+$text-color-secondary: #666666;
+
+/** 文本 - 占位符 */
+$text-color-placeholder: #999999;
+
+/** 文本 - 禁用 */
+$text-color-disabled: #cccccc;
+
+/** 边框 - 默认 */
+$border-color-base: #e5e5e5;
+
+/** 边框 - 浅色 */
+$border-color-light: #f0f0f0;
+
+/** 背景 - 页面 */
+$bg-color-page: #f5f5f5;
+
+/** 背景 - 卡片 */
+$bg-color-card: #ffffff;
+
+/** 背景 - 遮罩 */
+$bg-color-mask: rgba(0, 0, 0, 0.5);
+
+// ========== 字体 ==========
+
+/** 字号 - 超小 */
+$font-size-xs: 20px;
+
+/** 字号 - 小 */
+$font-size-sm: 24px;
+
+/** 字号 - 基础 */
+$font-size-base: 28px;
+
+/** 字号 - 中等 */
+$font-size-md: 32px;
+
+/** 字号 - 大 */
+$font-size-lg: 36px;
+
+/** 字号 - 超大 */
+$font-size-xl: 40px;
+
+/** 字重 - 常规 */
+$font-weight-normal: 400;
+
+/** 字重 - 中等 */
+$font-weight-medium: 500;
+
+/** 字重 - 加粗 */
+$font-weight-bold: 700;
+
+/** 行高 - 紧凑 */
+$line-height-sm: 1.2;
+
+/** 行高 - 基础 */
+$line-height-base: 1.5;
+
+/** 行高 - 宽松 */
+$line-height-lg: 1.8;
+
+// ========== 间距 ==========
+
+/** 间距 - 超小 */
+$spacing-xs: 8px;
+
+/** 间距 - 小 */
+$spacing-sm: 12px;
+
+/** 间距 - 基础 */
+$spacing-md: 16px;
+
+/** 间距 - 中等 */
+$spacing-lg: 20px;
+
+/** 间距 - 大 */
+$spacing-xl: 24px;
+
+/** 间距 - 超大 */
+$spacing-xxl: 32px;
+
+// ========== 圆角 ==========
+
+/** 圆角 - 小 */
+$radius-sm: 4px;
+
+/** 圆角 - 基础 */
+$radius-base: 8px;
+
+/** 圆角 - 中等 */
+$radius-md: 12px;
+
+/** 圆角 - 大 */
+$radius-lg: 16px;
+
+/** 圆角 - 圆形 */
+$radius-round: 999px;
+
+// ========== 阴影 ==========
+
+/** 阴影 - 浅 */
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+/** 阴影 - 基础 */
+$shadow-base: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+/** 阴影 - 深 */
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+
+// ========== 层级 ==========
+
+/** 层级 - 基础 */
+$z-index-base: 1;
+
+/** 层级 - 弹窗 */
+$z-index-modal: 1000;
+
+/** 层级 - 遮罩 */
+$z-index-mask: 999;
+
+/** 层级 - 顶部导航 */
+$z-index-navbar: 900;
+
+/** 层级 - 标签栏 */
+$z-index-tabbar: 900;
+
+// ========== 动画 ==========
+
+/** 动画时长 - 快 */
+$animation-duration-fast: 200ms;
+
+/** 动画时长 - 基础 */
+$animation-duration-base: 300ms;
+
+/** 动画时长 - 慢 */
+$animation-duration-slow: 500ms;
+
+/** 动画曲线 - 默认 */
+$animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

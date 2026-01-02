@@ -130,6 +130,41 @@ npx eslint src/
 npx stylelint src/**/*.scss
 ```
 
+### TSDoc 注释规范
+
+项目所有导出的函数、接口、类型定义必须添加标准的 TSDoc 注释：
+
+```typescript
+/**
+ * 函数/接口的简要描述
+ * @description 详细描述（可选）
+ * @template T - 泛型参数说明
+ * @param paramName - 参数说明
+ * @returns 返回值说明
+ * @example
+ * ```ts
+ * // 使用示例
+ * ```
+ */
+
+/**
+ * 接口/类型的简要描述
+ * @template T - 泛型参数说明（如适用）
+ */
+export interface MyInterface {
+  /** 属性说明 */
+  propertyName: string
+}
+```
+
+**注释要求：**
+- 所有 `export` 的函数、接口、类型必须有注释
+- 使用 `@template` 说明泛型参数
+- 使用 `@param` 说明函数参数
+- 使用 `@returns` 说明返回值
+- 复杂逻辑使用 `@example` 提供使用示例
+- 接口属性使用 `/** ... */` 行内注释
+
 ## 相关资源
 
 - [Taro 官方文档](https://taro-docs.jd.com/)
