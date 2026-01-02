@@ -1,60 +1,9 @@
-/**
- * 首页样式
- */
-@use '../../app.scss' as *;
+/* 使用全局 .page-title 样式 */
 
-.home-page {
-  min-height: 100vh;
-  background-color: $bg-color-page;
-  padding: $spacing-lg;
-  padding-bottom: 100px; // 为 tabBar 留出空间
-  box-sizing: border-box;
-}
-
-.header {
-  text-align: center;
-  padding: $spacing-xl 0;
-  margin-bottom: $spacing-lg;
-}
-
-.title {
-  display: block;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  color: $text-color-primary;
-  margin-bottom: $spacing-sm;
-}
-
-.subtitle {
-  display: block;
-  font-size: $font-size-base;
-  color: $text-color-secondary;
-}
-
-.content {
+.nav-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: 30px;
+  margin-top: 40px;
 }
 
-.card {
-  background-color: $bg-color-card;
-  border-radius: $radius-base;
-  padding: $spacing-md;
-  box-shadow: $shadow-sm;
-}
-
-.card-title {
-  display: block;
-  font-size: $font-size-md;
-  font-weight: $font-weight-medium;
-  color: $text-color-primary;
-  margin-bottom: $spacing-sm;
-}
-
-.card-desc {
-  display: block;
-  font-size: $font-size-sm;
-  color: $text-color-secondary;
-  line-height: $line-height-lg;
-}

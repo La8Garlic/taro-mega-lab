@@ -1,45 +1,42 @@
 import { View, Text } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
+import PageContainer from '../../components/PageContainer'
+import NavCard from '../../components/NavCard'
 import './index.scss'
 
-/**
- * 首页
- * @description 应用首页，展示主要内容和功能入口
- */
 export default function Home() {
-  useLoad(() => {
-    console.log('Home page loaded.')
-  })
+  const goToDetail = (id: number, title: string) => {
+    Taro.navigateTo({
+      url: `/pages/detail/index?id=${id}&title=${encodeURIComponent(title)}`
+    })
+  }
+
+  const goToSettings = () => {
+    Taro.navigateTo({
+      url: '/pages/settings/index'
+    })
+  }
 
   return (
-    <View className='home-page'>
-      <View className='header'>
-        <Text className='title'>Taro Mega Lab</Text>
-        <Text className='subtitle'>欢迎使用 Taro 多端开发框架</Text>
+    <PageContainer>
+      <Text className='page-title'>首页 - 入口与导航</Text>
+      <View className='nav-list'>
+        <NavCard
+          title='详情页演示 1'
+          description='id=1, 测试标题'
+          onClick={() => goToDetail(1, '测试标题')}
+        />
+        <NavCard
+          title='详情页演示 2'
+          description='id=2, 另一个标题'
+          onClick={() => goToDetail(2, '另一个标题')}
+        />
+        <NavCard
+          title='设置页'
+          description='应用设置'
+          onClick={goToSettings}
+        />
       </View>
-
-      <View className='content'>
-        <View className='card'>
-          <Text className='card-title'>快速开始</Text>
-          <Text className='card-desc'>
-            基于 Taro 4.x + React + TypeScript 构建
-          </Text>
-        </View>
-
-        <View className='card'>
-          <Text className='card-title'>技术栈</Text>
-          <Text className='card-desc'>
-            React 18 + TypeScript 5 + Sass + Webpack 5
-          </Text>
-        </View>
-
-        <View className='card'>
-          <Text className='card-title'>多端支持</Text>
-          <Text className='card-desc'>
-            微信小程序、H5、支付宝小程序等多种平台
-          </Text>
-        </View>
-      </View>
-    </View>
+    </PageContainer>
   )
 }
