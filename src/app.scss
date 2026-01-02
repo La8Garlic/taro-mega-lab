@@ -172,5 +172,13 @@ $animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
   font-size: 48px;
   font-weight: bold;
-  color: $success-color; // 这里的颜色为了验证是否使用了统一组件和统一的样式
+  color: $text-color-primary;
+  margin-bottom: 40px;
+}
+
+.param-item {
+  display: block;
+  font-size: 28px;
+  color: $text-color-secondary;
+  padding: $spacing-sm 0;
 }

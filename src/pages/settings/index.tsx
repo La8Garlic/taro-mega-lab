@@ -1,10 +1,11 @@
-import { View, Text } from '@tarojs/components'
+import { Text } from '@tarojs/components'
+import PageContainer from '../../components/PageContainer'
 import './index.scss'
 
 export default function Settings() {
   return (
-    <View className='settings'>
-      <Text>设置页</Text>
-    </View>
+    <PageContainer>
+      <Text className='page-title'>设置页</Text>
+    </PageContainer>
   )
 }
