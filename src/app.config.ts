@@ -1,11 +1,38 @@
 export default defineAppConfig({
   pages: [
-    'pages/index/index',
+    'pages/home/index',
+    'pages/components/index',
+    'pages/lab/index',
+    'pages/me/index',
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'Hello',
+    navigationBarTitleText: 'Taro Mega Lab',
     navigationBarTextStyle: 'black'
+  },
+  tabBar: {
+    color: '#999',
+    selectedColor: '#007AFF',
+    backgroundColor: '#fff',
+    borderStyle: 'black',
+    list: [
+      {
+        pagePath: 'pages/home/index',
+        text: '首页',
+      },
+      {
+        pagePath: 'pages/components/index',
+        text: '组件',
+      },
+      {
+        pagePath: 'pages/lab/index',
+        text: '实验室',
+      },
+      {
+        pagePath: 'pages/me/index',
+        text: '我的',
+      },
+    ],
   },
 })
