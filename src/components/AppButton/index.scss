@@ -1,0 +1,71 @@
+.app-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 32px; /* $spacing-lg $spacing-xxl */
+  border-radius: 12px; /* $radius-md */
+  font-size: 28px; /* $font-size-base */
+  font-weight: 500; /* $font-weight-medium */
+  transition: all 0.2s; /* $animation-duration-fast */
+  cursor: pointer;
+
+  &--primary {
+    background: #007aff; /* $primary-color */
+    color: #fff;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &--secondary {
+    background: #f5f5f5; /* $bg-color-page */
+    color: #333; /* $text-color-primary */
+
+    &:active {
+      background: #e8e8e8;
+    }
+  }
+
+  &--danger {
+    background: #ff3b30; /* $error-color */
+    color: #fff;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &--warning {
+    background: #ff9500; /* $warning-color */
+    color: #fff;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__loading {
+    margin-right: 8px; /* $spacing-xs */
+    font-size: 32px;
+    animation: rotate 1s linear infinite;
+  }
+
+  &__text {
+    font-size: 28px; /* $font-size-base */
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
