@@ -1,7 +1,7 @@
 import { View, Text } from '@tarojs/components'
 import { useState } from 'react'
 import { PageContainer, AppCard, AppButton, Section } from '../../components'
-import Taro, { usePageScroll, useReachBottom } from '@tarojs/taro'
+import Taro, { usePageScroll, useReachBottom, useDidShow, useDidHide } from '@tarojs/taro'
 import './index.scss'
 
 export default function Components() {
@@ -36,6 +36,25 @@ export default function Components() {
    */
   useReachBottom(() => {
     loadMore()
+  })
+
+  /**
+   * 页面显示时触发
+   * @description 页面刚加载完成，或从其他页面返回时触发
+   */
+  useDidShow(() => {
+    console.log('[生命周期] 页面显示 - useDidShow')
+    console.log('当前时间:', new Date().toLocaleTimeString())
+    console.log('当前列表项数:', items.length)
+  })
+
+  /**
+   * 页面隐藏时触发
+   * @description 页面被遮挡（如跳转到其他页面）时触发
+   */
+  useDidHide(() => {
+    console.log('[生命周期] 页面隐藏 - useDidHide')
+    console.log('当前时间:', new Date().toLocaleTimeString())
   })
 
   // ========== 数据加载逻辑 ==========
