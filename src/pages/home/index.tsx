@@ -20,6 +20,12 @@ export default function Home() {
     Taro.switchTab({ url: '/pages/components/index' })
   }
 
+  const goToApiIndex = () => {
+    Taro.navigateTo({
+      url: '/subpackages/lab/pages/api-index/index'
+    })
+  }
+
   return (
     <PageContainer>
       <Text className='page-title'>首页 - 入口与导航</Text>
@@ -45,6 +51,16 @@ export default function Home() {
             title='组件展示'
             description='查看所有可用组件及使用示例'
             onClick={goToComponents}
+          />
+        </View>
+      </Section>
+
+      <Section title='实验场'>
+        <View className='nav-list'>
+          <NavCard
+            title='API 实验场'
+            description='分包演示：API 测试页面集合'
+            onClick={goToApiIndex}
           />
         </View>
       </Section>
