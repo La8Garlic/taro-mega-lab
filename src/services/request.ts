@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro'
+import { getToken } from './storage'
 
 /**
  * HTTP 请求方法类型
@@ -14,6 +15,8 @@ interface RequestConfig extends Omit<Taro.request.Option, 'url' | 'method'> {
   showError?: boolean
   /** 请求超时时间（毫秒），默认 15000 */
   timeout?: number
+  /** 是否跳过 token 注入，默认 false */
+  skipToken?: boolean
 }
 
 /**
@@ -50,6 +53,30 @@ const TIMEOUT_MESSAGE = '请求超时，请检查网络连接'
  * 网络错误消息
  */
 const NETWORK_ERROR_MESSAGE = '网络连接失败，请检查网络'
+
+/**
+ * 401 未授权错误消息
+ */
+const UNAUTHORIZED_MESSAGE = '登录已过期，请重新登录'
+
+/**
+ * 处理 401 未授权响应
+ * @description 跳转到"我的"页面并清除 token
+ */
+function handleUnauthorized(): void {
+  Taro.showToast({
+    title: UNAUTHORIZED_MESSAGE,
+    icon: 'none',
+    duration: 2000,
+  })
+
+  // 延迟跳转，让用户看到提示
+  setTimeout(() => {
+    Taro.navigateTo({
+      url: '/pages/me/index',
+    })
+  }, 1500)
+}
 
 /**
  * 统一错误处理函数
@@ -103,8 +130,31 @@ function handleError(err: any, showError: boolean = true): ErrorResponse {
 }
 
 /**
+ * 构建请求头
+ * @description 合并默认头和自定义头，自动注入 token
+ * @param config - 请求配置
+ * @returns 完整的请求头对象
+ */
+function buildHeaders(config: RequestConfig): Record<string, string> {
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+    ...config.header,
+  }
+
+  // 自动注入 token（除非明确跳过）
+  if (!config.skipToken) {
+    const token = getToken()
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+  }
+
+  return headers
+}
+
+/**
  * 统一请求方法
- * @description 基于 Taro.request 封装的统一请求方法，支持 baseURL、timeout、错误标准化
+ * @description 基于 Taro.request 封装的统一请求方法，支持 baseURL、timeout、token 注入、401 跳转、错误标准化
  * @template T - 响应数据类型
  * @param url - 请求地址
  * @param method - 请求方法，默认 GET
@@ -119,21 +169,28 @@ function request<T = any>(
   data?: any,
   config: RequestConfig = {}
 ): Promise<T> {
-  const { showError = true, timeout = DEFAULT_TIMEOUT, ...restConfig } = config
+  const { showError = true, timeout = DEFAULT_TIMEOUT, skipToken = false, ...restConfig } = config
 
   return Taro.request({
     url: BASE_URL + url,
     method,
     data,
     timeout,
-    header: {
-      'content-type': 'application/json',
-      ...restConfig.header,
-    },
+    header: buildHeaders({ ...restConfig, skipToken }),
     ...restConfig,
   })
     .then((res) => {
       const { statusCode, data } = res
+
+      // 处理 401 未授权
+      if (statusCode === 401) {
+        handleUnauthorized()
+        const errorResponse: ErrorResponse = {
+          code: 401,
+          message: UNAUTHORIZED_MESSAGE,
+        }
+        throw errorResponse
+      }
 
       // 判断响应状态码
       if (statusCode >= 200 && statusCode < 300) {
