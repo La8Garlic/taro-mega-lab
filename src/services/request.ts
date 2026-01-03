@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro'
+import { getToken } from './storage'
 
 /**
  * HTTP 请求方法类型
@@ -12,71 +13,200 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 interface RequestConfig extends Omit<Taro.request.Option, 'url' | 'method'> {
   /** 是否显示错误提示，默认 true */
   showError?: boolean
+  /** 请求超时时间（毫秒），默认 15000 */
+  timeout?: number
+  /** 是否跳过 token 注入，默认 false */
+  skipToken?: boolean
 }
 
 /**
- * 响应数据接口
- * @template T - 响应数据类型
+ * 统一错误响应接口
+ * @description 标准化错误响应结构
  */
-interface Response<T = any> {
-  /** 状态码 */
+interface ErrorResponse {
+  /** 错误码 */
   code: number
-  /** 响应数据 */
-  data: T
-  /** 响应消息 */
+  /** 错误消息 */
   message: string
+  /** 原始错误对象 */
+  error?: Error
 }
 
 /**
  * API 基础地址
- * @description 配置 API 请求的基础 URL
+ * @description 从环境变量读取，默认为 JSONPlaceholder
  */
-const BASE_URL = ''
+declare const API_BASE_URL: string
+const BASE_URL = API_BASE_URL || 'https://jsonplaceholder.typicode.com'
+
+/**
+ * 默认请求超时时间（毫秒）
+ */
+const DEFAULT_TIMEOUT = 15000
+
+/**
+ * 请求超时错误消息
+ */
+const TIMEOUT_MESSAGE = '请求超时，请检查网络连接'
+
+/**
+ * 网络错误消息
+ */
+const NETWORK_ERROR_MESSAGE = '网络连接失败，请检查网络'
+
+/**
+ * 401 未授权错误消息
+ */
+const UNAUTHORIZED_MESSAGE = '登录已过期，请重新登录'
+
+/**
+ * 处理 401 未授权响应
+ * @description 跳转到"我的"页面并清除 token
+ */
+function handleUnauthorized(): void {
+  Taro.showToast({
+    title: UNAUTHORIZED_MESSAGE,
+    icon: 'none',
+    duration: 2000,
+  })
+
+  // 延迟跳转，让用户看到提示
+  setTimeout(() => {
+    Taro.navigateTo({
+      url: '/pages/me/index',
+    })
+  }, 1500)
+}
+
+/**
+ * 统一错误处理函数
+ * @description 标准化错误响应并显示提示
+ * @param err - 原始错误对象
+ * @param showError - 是否显示错误提示
+ * @returns 标准化的错误响应对象
+ */
+function handleError(err: any, showError: boolean = true): ErrorResponse {
+  let code = -1
+  let message = ''
+
+  // 判断错误类型
+  if (err.errMsg) {
+    // Taro 原生错误
+    if (err.errMsg.includes('timeout')) {
+      code = 408
+      message = TIMEOUT_MESSAGE
+    } else if (err.errMsg.includes('fail')) {
+      code = -1
+      message = NETWORK_ERROR_MESSAGE
+    } else {
+      code = err.statusCode || -1
+      message = err.errMsg || '请求失败'
+    }
+  } else if (err.message) {
+    // 标准 Error 对象
+    message = err.message
+    code = err.statusCode || -1
+  } else {
+    // 未知错误
+    message = '未知错误'
+  }
+
+  const errorResponse: ErrorResponse = {
+    code,
+    message,
+    error: err,
+  }
+
+  // 显示错误提示
+  if (showError) {
+    Taro.showToast({
+      title: message,
+      icon: 'none',
+      duration: 2000,
+    })
+  }
+
+  return errorResponse
+}
+
+/**
+ * 构建请求头
+ * @description 合并默认头和自定义头，自动注入 token
+ * @param config - 请求配置
+ * @returns 完整的请求头对象
+ */
+function buildHeaders(config: RequestConfig): Record<string, string> {
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+    ...config.header,
+  }
+
+  // 自动注入 token（除非明确跳过）
+  if (!config.skipToken) {
+    const token = getToken()
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+  }
+
+  return headers
+}
 
 /**
  * 统一请求方法
+ * @description 基于 Taro.request 封装的统一请求方法，支持 baseURL、timeout、token 注入、401 跳转、错误标准化
  * @template T - 响应数据类型
  * @param url - 请求地址
  * @param method - 请求方法，默认 GET
  * @param data - 请求数据
  * @param config - 请求配置
  * @returns 请求响应数据
+ * @throws {ErrorResponse} 请求失败时抛出标准化错误
  */
 function request<T = any>(
   url: string,
   method: HttpMethod = 'GET',
   data?: any,
   config: RequestConfig = {}
-): Promise<Response<T>> {
-  const { showError = true, ...restConfig } = config
+): Promise<T> {
+  const { showError = true, timeout = DEFAULT_TIMEOUT, skipToken = false, ...restConfig } = config
 
   return Taro.request({
     url: BASE_URL + url,
     method,
     data,
-    header: {
-      'content-type': 'application/json',
-      ...restConfig.header,
-    },
+    timeout,
+    header: buildHeaders({ ...restConfig, skipToken }),
     ...restConfig,
   })
     .then((res) => {
       const { statusCode, data } = res
 
-      if (statusCode >= 200 && statusCode < 300) {
-        return data as Response<T>
+      // 处理 401 未授权
+      if (statusCode === 401) {
+        handleUnauthorized()
+        const errorResponse: ErrorResponse = {
+          code: 401,
+          message: UNAUTHORIZED_MESSAGE,
+        }
+        throw errorResponse
       }
 
-      throw new Error(`请求失败: ${statusCode}`)
+      // 判断响应状态码
+      if (statusCode >= 200 && statusCode < 300) {
+        return data as T
+      }
+
+      // 非 2xx 状态码，抛出错误
+      const errorResponse = handleError(
+        { statusCode, errMsg: `请求失败: ${statusCode}` },
+        showError
+      )
+      throw errorResponse
     })
     .catch((err) => {
-      if (showError) {
-        Taro.showToast({
-          title: err.message || '网络请求失败',
-          icon: 'none',
-        })
-      }
-      throw err
+      const errorResponse = handleError(err, showError)
+      throw errorResponse
     })
 }
 
@@ -126,6 +256,26 @@ export function put<T = any>(url: string, data?: any, config?: RequestConfig) {
  */
 export function del<T = any>(url: string, data?: any, config?: RequestConfig) {
   return request<T>(url, 'DELETE', data, config)
+}
+
+/**
+ * PATCH 请求
+ * @template T - 响应数据类型
+ * @param url - 请求地址
+ * @param data - 请求体数据
+ * @param config - 请求配置
+ * @returns 请求响应数据
+ */
+export function patch<T = any>(url: string, data?: any, config?: RequestConfig) {
+  return request<T>(url, 'PATCH', data, config)
+}
+
+/**
+ * 导出请求配置常量
+ */
+export const requestConfig = {
+  BASE_URL,
+  DEFAULT_TIMEOUT,
 }
 
 export default request

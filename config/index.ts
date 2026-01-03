@@ -21,6 +21,7 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       "@tarojs/plugin-generator"
     ],
     defineConstants: {
+      API_BASE_URL: JSON.stringify(process.env.BASE_URL || 'https://jsonplaceholder.typicode.com')
     },
     copy: {
       patterns: [
