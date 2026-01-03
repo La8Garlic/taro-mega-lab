@@ -2,7 +2,7 @@
 
 ## 概述
 
-本文档记录了 Taro Mega Lab 项目中网络层的实现过程，包括 baseURL 配置、超时控制、错误标准化、token 注入、401 跳转等功能。
+本文档记录了 Taro Mega Lab 项目中网络层的实现过程，包括 baseURL 配置、超时控制、错误标准化、token 注入、401 跳转、列表加载、表单提交等功能。
 
 ---
 
@@ -172,6 +172,134 @@ handleUnauthorized() → Toast 提示 + 跳转 /pages/me/index
 | **Token 注入** | 点击"测试 Token 注入" | 响应结果显示 `Authorization: Bearer ...` |
 | **清除 Token** | 点击"清除 Token" | 状态显示"❌ 未设置" |
 | **401 跳转** | 模拟 401 响应 | Toast 提示 + 跳转到"我的"页面 |
+
+---
+
+## 第三步：实验室页面 - 列表加载 + 表单提交 + 状态 UI
+
+### 页面结构
+
+```
+┌─────────────────────────────┐
+│      网络层测试实验室          │
+├─────────────────────────────┤
+│ 【Token 状态】               │
+│  - 状态显示                   │
+│  - 设置/清除/测试 Token       │
+├─────────────────────────────┤
+│ 【基础测试】                 │
+│  - 正常请求                   │
+│  - 超时测试                   │
+│  - 错误响应                   │
+├─────────────────────────────┤
+│ 【响应结果】                 │
+│  - 测试结果展示               │
+├─────────────────────────────┤
+│ 【文章列表】                 │
+│  - 刷新/加载更多              │
+│  - idle/loading/success/error/empty 状态 │
+├─────────────────────────────┤
+│ 【发布文章】                 │
+│  - 标题/内容输入               │
+│  - 提交状态显示                │
+└─────────────────────────────┘
+```
+
+### 功能实现
+
+#### 1. 文章列表 (GET)
+```typescript
+// 获取文章列表
+const fetchPosts = async () => {
+  setListStatus('loading')
+  try {
+    const data = await get<Post[]>(`/posts?_limit=5&_page=${page}`)
+    if (data.length === 0) {
+      setListStatus('empty')
+    } else {
+      setPosts(data)
+      setListStatus('success')
+    }
+  } catch (error) {
+    setListStatus('error')
+  }
+}
+```
+
+#### 2. 发布文章 (POST)
+```typescript
+// 提交表单
+const handleSubmit = async () => {
+  if (!formData.title.trim() || !formData.body.trim()) {
+    Taro.showToast({ title: '请填写完整', icon: 'none' })
+    return
+  }
+
+  setSubmitStatus('loading')
+  try {
+    await post('/posts', {
+      title: formData.title,
+      body: formData.body,
+      userId: 1,
+    })
+    setSubmitStatus('success')
+    Taro.showToast({ title: '提交成功', icon: 'success' })
+    setFormData({ title: '', body: '' })
+    setTimeout(() => {
+      setPage(1)
+      fetchPosts()
+    }, 1000)
+  } catch (error) {
+    setSubmitStatus('error')
+  }
+}
+```
+
+#### 3. 状态 UI 管理
+
+| 状态 | 显示内容 | 触发条件 |
+|------|----------|----------|
+| idle | "点击刷新加载数据" | 初始状态 |
+| loading | "加载中..." | 请求进行中 |
+| success | 文章列表 | 数据加载成功 |
+| error | "加载失败，请重试" | 请求失败 |
+| empty | "暂无数据" | 返回空数组 |
+
+### 文件修改
+
+#### src/pages/lab/index.tsx
+- 新增列表相关状态：`posts`, `listStatus`, `page`
+- 新增表单相关状态：`formData`, `submitStatus`
+- 新增函数：`fetchPosts`, `handleLoadMore`, `handleRefresh`, `handleSubmit`
+- 新增 UI：文章列表区域、发布文章表单区域
+
+#### src/pages/lab/index.scss
+- 新增样式：`.list-actions`, `.status-box`, `.post-list`, `.post-item`, `.form-box`, `.form-item`, `.form-input`, `.form-success`, `.form-error`
+
+### 验收测试
+
+| 测试项 | 操作步骤 | 预期结果 |
+|--------|----------|----------|
+| **列表加载** | 点击"刷新" | 显示加载状态 → 显示文章列表 |
+| **分页加载** | 点击"加载更多" | 加载下一页数据 |
+| **表单提交** | 填写标题和内容，点击"提交" | 显示提交状态 → 成功提示 → 刷新列表 |
+| **空状态** | 请求不存在的页码 | 显示"暂无数据" |
+| **错误状态** | 断网后刷新 | 显示"加载失败，请重试" |
+
+### 关于 API 认证的说明
+
+**注意**：JSONPlaceholder 是一个公开的测试 API，不会验证 token。因此：
+- ✅ 有 token → 请求成功
+- ✅ 无 token → 请求成功（API 不验证）
+
+在真实项目中，后端 API 会验证 token：
+| 情况 | 请求 header | 后端验证 | 结果 |
+|------|------------|----------|------|
+| 有有效 token | `Authorization: Bearer xxx` | ✅ 验证通过 | 200 成功 |
+| 无 token | 空 | ❌ 验证失败 | **401 未授权** |
+| token 过期 | `Authorization: Bearer expired` | ❌ 验证失败 | **401 未授权** |
+
+我们的代码已正确实现 401 处理逻辑，真实项目中会正常工作。
 
 ---
 
