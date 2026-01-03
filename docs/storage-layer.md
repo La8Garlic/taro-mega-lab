@@ -579,9 +579,170 @@ function buildHeaders(config: RequestConfig): Record<string, string> {
 
 ---
 
+## Auth 认证模块
+
+为了进一步封装认证相关操作，项目创建了 `auth.ts` 模块，基于 `Storage` 实现 Token 和用户信息管理。
+
+### 文件：src/services/auth.ts
+
+#### 用户信息接口
+
+```typescript
+export interface UserInfo {
+  id: number          // 用户 ID
+  nickname: string    // 用户昵称
+  loginTime: number   // 登录时间戳
+}
+```
+
+#### Token 管理
+
+| 函数 | 功能 | 返回类型 |
+|------|------|---------|
+| `setToken(token)` | 设置 Token | `Promise<void>` |
+| `getToken()` | 获取 Token | `Promise<string \| null>` |
+| `removeToken()` | 移除 Token | `Promise<void>` |
+| `hasToken()` | 检查 Token 是否存在 | `Promise<boolean>` |
+
+#### 用户信息管理
+
+| 函数 | 功能 | 返回类型 |
+|------|------|---------|
+| `setUserInfo(userInfo)` | 设置用户信息 | `Promise<void>` |
+| `getUserInfo()` | 获取用户信息 | `Promise<UserInfo \| null>` |
+| `clearUserInfo()` | 清除用户信息 | `Promise<void>` |
+
+#### 认证状态管理
+
+| 函数 | 功能 | 返回类型 |
+|------|------|---------|
+| `clearAuth()` | 清除所有认证信息 | `Promise<void>` |
+| `isLoggedIn()` | 检查是否已登录 | `Promise<boolean>` |
+| `getAuthState()` | 获取完整认证状态 | `Promise<AuthState>` |
+
+#### 模拟登录功能
+
+| 函数 | 功能 | 返回类型 |
+|------|------|---------|
+| `fakeLogin(nickname)` | 模拟登录，生成 token 和用户信息 | `Promise<UserInfo>` |
+| `fakeLogout()` | 模拟登出 | `Promise<void>` |
+
+### 使用示例
+
+```typescript
+import { Auth } from '@/services/auth'
+
+// 模拟登录
+const userInfo = await Auth.fakeLogin('张三')
+// userInfo = { id: 1234567890, nickname: '张三', loginTime: 1704288000000 }
+
+// 检查登录状态
+const isLoggedIn = await Auth.isLoggedIn()
+
+// 获取认证状态
+const authState = await Auth.getAuthState()
+// authState = { isLoggedIn: true, token: 'token_xxx', userInfo: {...} }
+
+// 获取用户信息
+const userInfo = await Auth.getUserInfo()
+
+// 登出
+await Auth.fakeLogout()
+```
+
+---
+
+## 个人中心页面（Me 页面）
+
+Me 页面使用 `Auth` 模块实现模拟登录和 Token 持久化功能。
+
+### 页面功能
+
+```
+┌─────────────────────────────┐
+│      我的 - 登录态、缓存      │
+├─────────────────────────────┤
+│ 【登录状态】                 │
+│  未登录时：                  │
+│  ┌─────────────────────┐   │
+│  │ 昵称                 │   │
+│  │ [输入框             ]   │   │
+│  │     [登录]           │   │
+│  └─────────────────────┘   │
+│                             │
+│  已登录时：                  │
+│  用户 ID: 1234567890        │
+│  昵称: 张三                  │
+│  登录时间: 2025-01-03       │
+│  [退出登录]                 │
+├─────────────────────────────┤
+│ 【Token 持久化】             │
+│  ✅ 已登录，Token 已持久化   │
+│     重启应用后仍然保持登录   │
+└─────────────────────────────┘
+```
+
+### 核心代码
+
+```typescript
+// pages/me/index.tsx
+import { Auth, type UserInfo } from '../../services/auth'
+
+export default function Me() {
+  const [authState, setAuthState] = useState<AuthState>({
+    isLoggedIn: false,
+    userInfo: null,
+  })
+
+  // 页面显示时刷新状态
+  useDidShow(() => {
+    loadAuthState()
+  })
+
+  // 处理登录
+  const handleLogin = async () => {
+    const userInfo = await Auth.fakeLogin(nickname.trim())
+    setAuthState({
+      isLoggedIn: true,
+      userInfo,
+    })
+  }
+
+  // 处理登出
+  const handleLogout = async () => {
+    await Auth.fakeLogout()
+    setAuthState({
+      isLoggedIn: false,
+      userInfo: null,
+    })
+  }
+
+  return (
+    // UI 渲染...
+  )
+}
+```
+
+### Token 持久化验证
+
+**验收标准**：
+1. 用户登录后，Token 存储到本地
+2. 重启应用（H5 刷新 / 小程序关闭重开）
+3. 打开 Me 页面，仍然显示登录状态
+
+**技术实现**：
+- `useDidShow` - 页面显示时自动加载认证状态
+- `Auth.getAuthState()` - 并行获取 token 和用户信息
+- 本地存储键：`StorageKey.TOKEN` 和 `StorageKey.USER_INFO`
+
+---
+
 ## 未来计划
 
-- [ ] 创建 `auth.ts` 模块，将认证相关操作从 `request.ts` 迁出
+- [x] ~~创建 `auth.ts` 模块~~ ✅ 已完成
+- [ ] 实现 settings 页面持久化
+- [ ] 实现草稿自动保存功能
+- [ ] 添加清除缓存按钮
 - [ ] 重构 `request.ts` 请求拦截器，支持异步 token 获取
 - [ ] 添加数据迁移工具，支持从旧存储键迁移数据
 - [ ] 添加存储过期机制
@@ -591,4 +752,5 @@ function buildHeaders(config: RequestConfig): Record<string, string> {
 
 ## 总结
 
-本次重构将存储层从简单的 Token 封装升级为通用的类型安全存储系统，为后续的功能扩展（设置持久化、草稿自动保存等）奠定了基础。
+本次重构将存储层从简单的 Token 封装升级为通用的类型安全存储系统，并创建了 `Auth` 认证模块，为后续的功能扩展（设置持久化、草稿自动保存等）奠定了基础。
+
