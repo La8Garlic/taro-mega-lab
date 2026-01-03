@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Text, View, Input } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import PageContainer from '../../components/PageContainer'
 import AppButton from '../../components/AppButton'
 import Section from '../../components/Section'
 import { get, post } from '../../services/request'
-import { setToken, removeToken, getToken, hasToken as checkHasToken } from '../../services/storage'
+import { Storage, StorageKey } from '../../services/storage'
 import './index.scss'
 
 /**
@@ -43,19 +43,32 @@ export default function Lab() {
 
   // Token 状态
   const [tokenInfo, setTokenInfo] = useState({
-    hasToken: checkHasToken(),
-    token: getToken(),
+    hasToken: false,
+    token: '',
   })
+
+  /**
+   * 加载 token 状态
+   */
+  const loadTokenState = async () => {
+    const token = await Storage.get<string>(StorageKey.TOKEN)
+    setTokenInfo({
+      hasToken: !!token,
+      token: token || '',
+    })
+  }
 
   /**
    * 更新 token 状态显示
    */
-  const updateTokenInfo = () => {
-    setTokenInfo({
-      hasToken: checkHasToken(),
-      token: getToken(),
-    })
+  const updateTokenInfo = async () => {
+    await loadTokenState()
   }
+
+  // 初始化时加载 token 状态
+  useEffect(() => {
+    loadTokenState()
+  }, [])
 
   /**
    * 测试正常请求
@@ -128,10 +141,10 @@ export default function Lab() {
   /**
    * 设置模拟 token
    */
-  const handleSetToken = () => {
+  const handleSetToken = async () => {
     const testToken = 'test_token_' + Date.now()
-    setToken(testToken)
-    updateTokenInfo()
+    await Storage.set(StorageKey.TOKEN, testToken)
+    await updateTokenInfo()
     Taro.showToast({
       title: `已设置 token: ${testToken.slice(0, 15)}...`,
       icon: 'none',
@@ -142,9 +155,9 @@ export default function Lab() {
   /**
    * 清除 token
    */
-  const handleClearToken = () => {
-    removeToken()
-    updateTokenInfo()
+  const handleClearToken = async () => {
+    await Storage.remove(StorageKey.TOKEN)
+    await updateTokenInfo()
     Taro.showToast({ title: 'Token 已清除', icon: 'success' })
   }
 
@@ -163,11 +176,11 @@ export default function Lab() {
 
     try {
       await get('/posts')
-      const currentToken = getToken()
+      const currentToken = await Storage.get<string>(StorageKey.TOKEN)
       setResponseData({
         type: 'success',
-        message: `请求成功，header 中包含 Authorization: Bearer ${currentToken.slice(0, 10)}...`,
-        token: currentToken,
+        message: `请求成功，header 中包含 Authorization: Bearer ${currentToken?.slice(0, 10)}...`,
+        token: currentToken || '',
       })
       Taro.showToast({ title: 'Token 注入成功', icon: 'success' })
     } catch (error: any) {

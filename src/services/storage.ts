@@ -126,7 +126,7 @@ export async function clear(): Promise<void> {
 export async function keys(): Promise<string[]> {
   try {
     const res = await Taro.getStorageInfo()
-    return res.keys as string[]
+    return (res as any).keys || []
   } catch (error) {
     throw new StorageError('Failed to get storage keys', 'KEYS_FAILED')
   }
