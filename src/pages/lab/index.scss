@@ -1,1 +1,38 @@
-/* 实验室页样式已使用全局 .page-title */
+/* 使用全局 .page-title 样式 */
+
+/* 测试按钮区域 */
+.test-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 响应结果展示 */
+.response-result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.response-line {
+  font-size: 24px;
+  color: #000;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+/* 测试说明 */
+.test-description {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.description-item {
+  font-size: 24px;
+  color: #666;
+  line-height: 1.8;
+}
