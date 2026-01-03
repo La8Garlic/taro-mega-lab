@@ -1,0 +1,171 @@
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  font-size: 28px;
+  color: #666;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
+}
+
+.loading-box {
+  padding: 40px;
+  text-align: center;
+}
+
+.loading-text {
+  font-size: 28px;
+  color: #999;
+}
+
+.network-status {
+  padding: 24px;
+  text-align: center;
+}
+
+.network-type {
+  font-size: 32px;
+  font-weight: bold;
+  color: #007AFF;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+}
+
+.location-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  margin: 0 24px;
+}
+
+.location-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.location-label {
+  font-size: 28px;
+  color: #666;
+}
+
+.location-value {
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.location-error {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.error-text {
+  font-size: 32px;
+  color: #ff3b30;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.error-hint {
+  font-size: 24px;
+  color: #999;
+}
+
+.scan-history {
+  padding: 24px;
+}
+
+.history-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.history-result {
+  font-size: 26px;
+  color: #333;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.history-time {
+  font-size: 22px;
+  color: #999;
+}
+
+.api-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.api-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  background: #f5f5f5;
+  border-radius: 12px;
+}
+
+.api-name {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  font-family: monospace;
+}
+
+.api-desc {
+  font-size: 24px;
+  color: #666;
+  line-height: 1.5;
+}
