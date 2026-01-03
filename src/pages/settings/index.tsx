@@ -226,7 +226,7 @@ export default function Settings() {
             className='draft-input'
             placeholder='请输入内容，自动保存草稿...'
             value={draft}
-            onInput={(e) => saveDraft(e.detail.value)}
+            onInput={saveDraft}
             maxlength={500}
           />
           <Text className='draft-count'>{draft.length} / 500</Text>
