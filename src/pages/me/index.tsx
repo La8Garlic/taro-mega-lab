@@ -5,6 +5,7 @@ import PageContainer from '../../components/PageContainer'
 import AppButton from '../../components/AppButton'
 import Section from '../../components/Section'
 import { Auth, type UserInfo } from '../../services/auth'
+import { Storage } from '../../services/storage'
 import './index.scss'
 
 /**
@@ -94,6 +95,32 @@ export default function Me() {
     }
   }
 
+  /**
+   * 清除所有缓存
+   */
+  const handleClearCache = async () => {
+    try {
+      await Taro.showModal({
+        title: '确认清除',
+        content: '确定要清除所有缓存吗？包括登录信息、设置、草稿等所有数据。',
+        confirmText: '确定',
+        cancelText: '取消',
+      })
+      await Storage.clear()
+      setAuthState({
+        isLoggedIn: false,
+        userInfo: null,
+      })
+      Taro.showToast({
+        title: '缓存已清除',
+        icon: 'success',
+        duration: 1500,
+      })
+    } catch (error) {
+      // 用户取消操作，不处理
+    }
+  }
+
   return (
     <PageContainer>
       <Text className='page-title'>我的 - 登录态、缓存、设置</Text>
@@ -148,6 +175,14 @@ export default function Me() {
             ? '✅ 已登录，Token 已持久化到本地存储。重启应用后仍然保持登录状态。'
             : '❌ 未登录，请先登录。'}
         </Text>
+      </Section>
+
+      {/* ==================== 清除缓存 ==================== */}
+      <Section title='清除缓存'>
+        <Text className='hint-text'>
+          一键清除所有本地缓存，包括登录信息、设置、草稿等所有数据。
+        </Text>
+        <AppButton text='清除所有缓存' type='danger' onClick={handleClearCache} />
       </Section>
     </PageContainer>
   )
