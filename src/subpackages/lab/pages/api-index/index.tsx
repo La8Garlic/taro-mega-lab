@@ -22,8 +22,14 @@ export default function ApiIndex() {
     <PageContainer>
       <Text className='page-title'>API 实验场</Text>
 
-      <Section title='网络 API'>
+      <Section title='实验功能'>
         <View className='api-grid'>
+          <View className='api-card' onClick={() => handleNavigate('network', '网络测试')}>
+            <Text className='api-card-icon'>🌐</Text>
+            <Text className='api-card-title'>网络测试</Text>
+            <Text className='api-card-desc'>请求、响应、Token</Text>
+          </View>
+
           <View className='api-card' onClick={() => handleNavigate('api-media', '媒体 API')}>
             <Text className='api-card-icon'>📷</Text>
             <Text className='api-card-title'>媒体 API</Text>
@@ -33,13 +39,7 @@ export default function ApiIndex() {
           <View className='api-card' onClick={() => handleNavigate('api-device', '设备 API')}>
             <Text className='api-card-icon'>📱</Text>
             <Text className='api-card-title'>设备 API</Text>
-            <Text className='api-card-desc'>系统信息、网络状态</Text>
-          </View>
-
-          <View className='api-card' onClick={() => handleNavigate('api-file', '文件 API')}>
-            <Text className='api-card-icon'>📁</Text>
-            <Text className='api-card-title'>文件 API</Text>
-            <Text className='api-card-desc'>文件读写、缓存管理</Text>
+            <Text className='api-card-desc'>系统信息、位置、扫码</Text>
           </View>
         </View>
       </Section>
