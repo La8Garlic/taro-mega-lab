@@ -737,12 +737,225 @@ export default function Me() {
 
 ---
 
+---
+
+## 设置页面（Settings 页面）
+
+Settings 页面演示了应用设置的持久化存储和草稿自动保存功能。
+
+### 页面功能
+
+```
+┌─────────────────────────────────────┐
+│  设置 - 持久化 + 草稿自动保存        │
+├─────────────────────────────────────┤
+│ 【应用设置】                         │
+│  深色模式      [开关]               │
+│  每页条数      [=====●=====] 20 条  │
+│  调试模式      [开关]               │
+│  [重置设置]                         │
+├─────────────────────────────────────┤
+│ 【草稿自动保存】                     │
+│  在下方输入框中输入内容，会自动保存  │
+│  到本地。离开页面再回来，内容仍然    │
+│  保留。                              │
+│  ┌─────────────────────────────┐   │
+│  │ 请输入内容，自动保存草稿...  │   │
+│  │                             │   │
+│  └─────────────────────────────┘   │
+│  12 / 500                           │
+│  [清空草稿]                         │
+├─────────────────────────────────────┤
+│ 【持久化状态】                       │
+│  当前设置已保存到本地存储。          │
+│  重启应用后设置仍然保留。            │
+│  深色模式：✅ 开启                  │
+│  每页条数：20 条                    │
+│  调试模式：❌ 关闭                  │
+└─────────────────────────────────────┘
+```
+
+### 设置项接口
+
+```typescript
+interface AppSettings {
+  darkMode: boolean    // 深色模式开关
+  pageSize: number     // 每页条数（5-50，步长5）
+  debug: boolean       // 调试模式开关
+}
+```
+
+### 核心功能
+
+#### 1. 设置持久化
+
+```typescript
+// 加载设置
+const loadSettings = async () => {
+  const savedSettings = await Storage.get<AppSettings>(StorageKey.SETTINGS)
+  if (savedSettings) {
+    setSettings(savedSettings)
+  }
+}
+
+// 保存设置
+const saveSettings = async (newSettings: AppSettings) => {
+  await Storage.set(StorageKey.SETTINGS, newSettings)
+  setSettings(newSettings)
+}
+
+// 切换开关
+const handleToggleDarkMode = async (value: boolean) => {
+  await saveSettings({
+    ...settings,
+    darkMode: value,
+  })
+  Taro.showToast({
+    title: value ? '已开启深色模式' : '已关闭深色模式',
+    icon: 'none',
+  })
+}
+
+// 修改滑块值
+const handleChangePageSize = async (value: number) => {
+  const pageSize = Math.round(value)
+  await saveSettings({
+    ...settings,
+    pageSize,
+  })
+  Taro.showToast({
+    title: `每页 ${pageSize} 条`,
+    icon: 'none',
+  })
+}
+
+// 重置设置
+const handleResetSettings = async () => {
+  const defaultSettings: AppSettings = {
+    darkMode: false,
+    pageSize: 10,
+    debug: false,
+  }
+  await saveSettings(defaultSettings)
+  Taro.showToast({
+    title: '设置已重置',
+    icon: 'success',
+  })
+}
+```
+
+#### 2. 草稿自动保存
+
+```typescript
+// 加载草稿
+const loadDraft = async () => {
+  const savedDraft = await Storage.get<string>(StorageKey.DRAFT_SETTINGS)
+  if (savedDraft) {
+    setDraft(savedDraft)
+  }
+}
+
+// 保存草稿（输入时自动触发）
+const saveDraft = (e: any) => {
+  const value = e?.detail?.value ?? ''
+  setDraft(value)
+  // 异步保存到后台，不阻塞 UI
+  Storage.set(StorageKey.DRAFT_SETTINGS, value)
+}
+
+// 清空草稿
+const clearDraft = async () => {
+  await Storage.remove(StorageKey.DRAFT_SETTINGS)
+  setDraft('')
+  Taro.showToast({
+    title: '草稿已清空',
+    icon: 'success',
+  })
+}
+
+// 页面显示时恢复草稿
+useDidShow(() => {
+  loadDraft()
+})
+
+// 初始化时加载设置
+useEffect(() => {
+  loadSettings()
+  loadDraft()
+}, [])
+```
+
+### 验收标准
+
+1. **设置持久化**：
+   - 修改深色模式/每页条数/调试模式后立即保存
+   - 刷新页面或重启应用后设置仍然保留
+   - 重置设置恢复默认值
+
+2. **草稿自动保存**：
+   - 输入内容时实时保存到本地
+   - 离开页面后再回来，内容自动恢复
+   - 清空草稿后本地存储也被清除
+
+3. **UI 反馈**：
+   - 每次操作都有 Toast 提示
+   - 实时显示当前设置状态
+   - 草稿字数统计实时更新
+
+---
+
+## 清除缓存功能
+
+Me 页面提供一键清除所有本地缓存的功能。
+
+### 实现代码
+
+```typescript
+const handleClearCache = async () => {
+  try {
+    // 显示确认弹窗
+    await Taro.showModal({
+      title: '确认清除',
+      content: '确定要清除所有缓存吗？包括登录信息、设置、草稿等所有数据。',
+      confirmText: '确定',
+      cancelText: '取消',
+    })
+
+    // 清除所有存储
+    await Storage.clear()
+
+    // 重置认证状态
+    setAuthState({
+      isLoggedIn: false,
+      userInfo: null,
+    })
+
+    Taro.showToast({
+      title: '缓存已清除',
+      icon: 'success',
+      duration: 1500,
+    })
+  } catch (error) {
+    // 用户取消操作，不处理
+  }
+}
+```
+
+### 功能说明
+
+- 调用 `Storage.clear()` 清除所有本地存储
+- 包括：Token、用户信息、设置、草稿等所有数据
+- 显示确认弹窗防止误操作
+- 清除后自动重置页面状态
+
+---
+
 ## 未来计划
 
 - [x] ~~创建 `auth.ts` 模块~~ ✅ 已完成
-- [ ] 实现 settings 页面持久化
-- [ ] 实现草稿自动保存功能
-- [ ] 添加清除缓存按钮
+- [x] ~~实现 settings 页面持久化~~ ✅ 已完成
+- [x] ~~实现草稿自动保存功能~~ ✅ 已完成
+- [x] ~~添加清除缓存按钮~~ ✅ 已完成
 - [ ] 重构 `request.ts` 请求拦截器，支持异步 token 获取
 - [ ] 添加数据迁移工具，支持从旧存储键迁移数据
 - [ ] 添加存储过期机制
@@ -752,5 +965,14 @@ export default function Me() {
 
 ## 总结
 
-本次重构将存储层从简单的 Token 封装升级为通用的类型安全存储系统，并创建了 `Auth` 认证模块，为后续的功能扩展（设置持久化、草稿自动保存等）奠定了基础。
+本次重构将存储层从简单的 Token 封装升级为通用的类型安全存储系统，并创建了 `Auth` 认证模块。目前已完成：
+
+1. ✅ 类型安全的异步存储 API（`Storage.set/get/remove/clear`）
+2. ✅ 统一的存储键管理（`StorageKey` 枚举）
+3. ✅ 完善的错误处理（`StorageError` 类）
+4. ✅ Auth 认证模块（Token + 用户信息管理）
+5. ✅ Me 页面（模拟登录 + Token 持久化 + 清除缓存）
+6. ✅ Settings 页面（设置持久化 + 草稿自动保存）
+
+所有功能均已持久化到本地存储，重启应用后数据仍然保留。
 
