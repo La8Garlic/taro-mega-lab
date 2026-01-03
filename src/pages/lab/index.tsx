@@ -5,7 +5,7 @@ import PageContainer from '../../components/PageContainer'
 import AppButton from '../../components/AppButton'
 import Section from '../../components/Section'
 import { get, post } from '../../services/request'
-import { Storage, StorageKey } from '../../services/storage'
+import { Auth } from '../../services/auth'
 import './index.scss'
 
 /**
@@ -51,7 +51,7 @@ export default function Lab() {
    * 加载 token 状态
    */
   const loadTokenState = async () => {
-    const token = await Storage.get<string>(StorageKey.TOKEN)
+    const token = await Auth.getToken()
     setTokenInfo({
       hasToken: !!token,
       token: token || '',
@@ -143,7 +143,7 @@ export default function Lab() {
    */
   const handleSetToken = async () => {
     const testToken = 'test_token_' + Date.now()
-    await Storage.set(StorageKey.TOKEN, testToken)
+    await Auth.setToken(testToken)
     await updateTokenInfo()
     Taro.showToast({
       title: `已设置 token: ${testToken.slice(0, 15)}...`,
@@ -156,7 +156,7 @@ export default function Lab() {
    * 清除 token
    */
   const handleClearToken = async () => {
-    await Storage.remove(StorageKey.TOKEN)
+    await Auth.removeToken()
     await updateTokenInfo()
     Taro.showToast({ title: 'Token 已清除', icon: 'success' })
   }
@@ -176,7 +176,7 @@ export default function Lab() {
 
     try {
       await get('/posts')
-      const currentToken = await Storage.get<string>(StorageKey.TOKEN)
+      const currentToken = await Auth.getToken()
       setResponseData({
         type: 'success',
         message: `请求成功，header 中包含 Authorization: Bearer ${currentToken?.slice(0, 10)}...`,

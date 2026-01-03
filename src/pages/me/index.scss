@@ -1,1 +1,56 @@
 /* 我的页样式已使用全局 .page-title */
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+}
+
+.user-info-label {
+  font-size: 28px;
+  color: #666;
+  min-width: 140px;
+}
+
+.user-info-value {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-label {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 16px;
+  font-size: 28px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.hint-text {
+  font-size: 26px;
+  color: #666;
+  line-height: 1.6;
+}
