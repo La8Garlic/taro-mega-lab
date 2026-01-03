@@ -13,6 +13,8 @@ export enum StorageKey {
   SETTINGS = 'app_settings',
   /** 设置页面草稿 */
   DRAFT_SETTINGS = 'draft_settings',
+  /** 扫码历史记录 */
+  SCAN_HISTORY = 'scan_history',
 }
 
 /**

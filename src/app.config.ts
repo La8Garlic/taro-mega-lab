@@ -43,6 +43,7 @@ export default defineAppConfig({
       pages: [
         'pages/api-index/index',
         'pages/api-media/index',
+        'pages/api-device/index',
       ],
     },
   ],
