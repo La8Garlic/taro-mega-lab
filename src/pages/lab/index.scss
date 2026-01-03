@@ -1,6 +1,6 @@
 /* 使用全局 .page-title 样式 */
 
-/* Token 状态区域 */
+/* ==================== 基础测试样式 ==================== */
 .token-status {
   display: flex;
   flex-direction: column;
@@ -18,14 +18,12 @@
   word-break: break-all;
 }
 
-/* 测试按钮区域 */
 .test-buttons {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* 响应结果展示 */
 .response-result {
   display: flex;
   flex-direction: column;
@@ -42,15 +40,94 @@
   word-break: break-all;
 }
 
-/* 测试说明 */
-.test-description {
+/* ==================== 列表样式 ==================== */
+.list-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.status-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 32px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.status-box--error {
+  background-color: #ffebee;
+}
+
+.status-text {
+  font-size: 28px;
+  color: #666;
+}
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-item {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.post-title {
+  display: block;
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.post-body {
+  display: block;
+  font-size: 26px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ==================== 表单样式 ==================== */
+.form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-item {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.description-item {
-  font-size: 24px;
-  color: #666;
-  line-height: 1.8;
+.form-label {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 16px;
+  font-size: 28px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.form-success {
+  font-size: 26px;
+  color: #34c759;
+  text-align: center;
+}
+
+.form-error {
+  font-size: 26px;
+  color: #ff3b30;
+  text-align: center;
 }

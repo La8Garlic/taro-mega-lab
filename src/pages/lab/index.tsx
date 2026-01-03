@@ -1,22 +1,49 @@
 import { useState } from 'react'
-import { Text, View } from '@tarojs/components'
+import { Text, View, Input } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import PageContainer from '../../components/PageContainer'
 import AppButton from '../../components/AppButton'
 import Section from '../../components/Section'
-import { get } from '../../services/request'
-import { setToken, removeToken, getToken, hasToken } from '../../services/storage'
+import { get, post } from '../../services/request'
+import { setToken, removeToken, getToken, hasToken as checkHasToken } from '../../services/storage'
 import './index.scss'
 
 /**
+ * 文章数据接口
+ */
+interface Post {
+  id: number
+  title: string
+  body: string
+  userId: number
+}
+
+/**
+ * 状态类型
+ */
+type StatusType = 'idle' | 'loading' | 'success' | 'error' | 'empty'
+
+/**
  * 实验室页面
- * @description 用于测试网络请求封装的功能
+ * @description 网络层完整功能演示：测试、列表加载、表单提交、状态管理
  */
 export default function Lab() {
+  // 测试相关状态
   const [responseData, setResponseData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+
+  // 列表相关状态
+  const [posts, setPosts] = useState<Post[]>([])
+  const [listStatus, setListStatus] = useState<StatusType>('idle')
+  const [page, setPage] = useState(1)
+
+  // 表单相关状态
+  const [formData, setFormData] = useState({ title: '', body: '' })
+  const [submitStatus, setSubmitStatus] = useState<StatusType>('idle')
+
+  // Token 状态
   const [tokenInfo, setTokenInfo] = useState({
-    hasToken: hasToken(),
+    hasToken: checkHasToken(),
     token: getToken(),
   })
 
@@ -25,26 +52,24 @@ export default function Lab() {
    */
   const updateTokenInfo = () => {
     setTokenInfo({
-      hasToken: hasToken(),
+      hasToken: checkHasToken(),
       token: getToken(),
     })
   }
 
   /**
    * 测试正常请求
-   * @description 验证能正常发送和接收响应
    */
   const handleTestNormalRequest = async () => {
     setLoading(true)
     setResponseData(null)
 
     try {
-      // 获取文章列表（JSONPlaceholder 的公共接口）
       const data = await get<any[]>('/posts?_limit=5')
       setResponseData({
         type: 'success',
         message: '请求成功',
-        data: data.slice(0, 2), // 只显示前两条
+        data: data.slice(0, 2),
       })
       Taro.showToast({ title: '请求成功', icon: 'success' })
     } catch (error: any) {
@@ -60,14 +85,12 @@ export default function Lab() {
 
   /**
    * 测试超时请求
-   * @description 设置极短的超时时间，验证超时错误处理
    */
   const handleTestTimeout = async () => {
     setLoading(true)
     setResponseData(null)
 
     try {
-      // 设置 1ms 超时，必然触发超时错误
       await get('/posts', {}, { timeout: 1 })
     } catch (error: any) {
       setResponseData({
@@ -83,14 +106,12 @@ export default function Lab() {
 
   /**
    * 测试错误响应
-   * @description 请求不存在的路径，验证错误格式统一
    */
   const handleTestErrorResponse = async () => {
     setLoading(true)
     setResponseData(null)
 
     try {
-      // 请求不存在的路径
       await get('/non-exist-path-404')
     } catch (error: any) {
       setResponseData({
@@ -106,7 +127,6 @@ export default function Lab() {
 
   /**
    * 设置模拟 token
-   * @description 设置一个测试 token，用于验证 token 注入功能
    */
   const handleSetToken = () => {
     const testToken = 'test_token_' + Date.now()
@@ -121,7 +141,6 @@ export default function Lab() {
 
   /**
    * 清除 token
-   * @description 移除本地存储的 token
    */
   const handleClearToken = () => {
     removeToken()
@@ -131,20 +150,18 @@ export default function Lab() {
 
   /**
    * 测试带 token 的请求
-   * @description 发送请求并验证 header 中是否包含 token
    */
   const handleTestTokenRequest = async () => {
     setLoading(true)
     setResponseData(null)
 
-    if (!hasToken()) {
+    if (!tokenInfo.hasToken) {
       Taro.showToast({ title: '请先设置 token', icon: 'none' })
       setLoading(false)
       return
     }
 
     try {
-      // 发送请求，会自动带上 token
       await get('/posts')
       const currentToken = getToken()
       setResponseData({
@@ -164,11 +181,73 @@ export default function Lab() {
     }
   }
 
+  /**
+   * 获取文章列表
+   */
+  const fetchPosts = async () => {
+    setListStatus('loading')
+    try {
+      const data = await get<Post[]>(`/posts?_limit=5&_page=${page}`)
+      if (data.length === 0) {
+        setListStatus('empty')
+      } else {
+        setPosts(data)
+        setListStatus('success')
+      }
+    } catch (error) {
+      setListStatus('error')
+    }
+  }
+
+  /**
+   * 加载更多
+   */
+  const handleLoadMore = () => {
+    setPage(page + 1)
+    fetchPosts()
+  }
+
+  /**
+   * 刷新列表
+   */
+  const handleRefresh = () => {
+    setPage(1)
+    fetchPosts()
+  }
+
+  /**
+   * 提交表单
+   */
+  const handleSubmit = async () => {
+    if (!formData.title.trim() || !formData.body.trim()) {
+      Taro.showToast({ title: '请填写完整', icon: 'none' })
+      return
+    }
+
+    setSubmitStatus('loading')
+    try {
+      await post('/posts', {
+        title: formData.title,
+        body: formData.body,
+        userId: 1,
+      })
+      setSubmitStatus('success')
+      Taro.showToast({ title: '提交成功', icon: 'success' })
+      setFormData({ title: '', body: '' })
+      setTimeout(() => {
+        setPage(1)
+        fetchPosts()
+      }, 1000)
+    } catch (error) {
+      setSubmitStatus('error')
+    }
+  }
+
   return (
     <PageContainer>
       <Text className='page-title'>网络层测试实验室</Text>
 
-      {/* Token 状态 */}
+      {/* ==================== 基础测试区域 ==================== */}
       <Section title='Token 状态'>
         <View className='token-status'>
           <Text className='token-line'>
@@ -193,7 +272,6 @@ export default function Lab() {
         </View>
       </Section>
 
-      {/* 基础测试场景 */}
       <Section title='基础测试'>
         <View className='test-buttons'>
           <AppButton
@@ -247,18 +325,86 @@ export default function Lab() {
         </Section>
       )}
 
-      {/* 说明 */}
-      <Section title='验收标准'>
-        <View className='test-description'>
-          <Text className='description-item'>
-            ✓ Token 设置后，请求 header 自动带上 Authorization
-          </Text>
-          <Text className='description-item'>
-            ✓ 401 响应时显示提示并跳转到 /pages/me/index
-          </Text>
-          <Text className='description-item'>
-            ✓ 清除 token 后，请求不再携带 Authorization
-          </Text>
+      {/* ==================== 列表加载区域 ==================== */}
+      <Section title='文章列表'>
+        <View className='list-actions'>
+          <AppButton text='刷新' type='primary' onClick={handleRefresh} />
+          {listStatus === 'success' && (
+            <AppButton text='加载更多' type='secondary' onClick={handleLoadMore} />
+          )}
+        </View>
+
+        {listStatus === 'idle' && (
+          <View className='status-box'>
+            <Text className='status-text'>点击"刷新"加载数据</Text>
+          </View>
+        )}
+
+        {listStatus === 'loading' && (
+          <View className='status-box'>
+            <Text className='status-text'>加载中...</Text>
+          </View>
+        )}
+
+        {listStatus === 'empty' && (
+          <View className='status-box'>
+            <Text className='status-text'>暂无数据</Text>
+          </View>
+        )}
+
+        {listStatus === 'error' && (
+          <View className='status-box status-box--error'>
+            <Text className='status-text'>加载失败，请重试</Text>
+          </View>
+        )}
+
+        {listStatus === 'success' && (
+          <View className='post-list'>
+            {posts.map((post) => (
+              <View key={post.id} className='post-item'>
+                <Text className='post-title'>#{post.id} {post.title}</Text>
+                <Text className='post-body'>{post.body}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </Section>
+
+      {/* ==================== 表单提交区域 ==================== */}
+      <Section title='发布文章'>
+        <View className='form-box'>
+          <View className='form-item'>
+            <Text className='form-label'>标题</Text>
+            <Input
+              className='form-input'
+              placeholder='请输入标题'
+              value={formData.title}
+              onInput={(e) => setFormData({ ...formData, title: e.detail.value })}
+            />
+          </View>
+          <View className='form-item'>
+            <Text className='form-label'>内容</Text>
+            <Input
+              className='form-input'
+              placeholder='请输入内容'
+              value={formData.body}
+              onInput={(e) => setFormData({ ...formData, body: e.detail.value })}
+            />
+          </View>
+          <AppButton
+            text='提交'
+            type='primary'
+            onClick={handleSubmit}
+            loading={submitStatus === 'loading'}
+            disabled={submitStatus === 'loading'}
+          />
+
+          {submitStatus === 'success' && (
+            <Text className='form-success'>✅ 提交成功</Text>
+          )}
+          {submitStatus === 'error' && (
+            <Text className='form-error'>❌ 提交失败</Text>
+          )}
         </View>
       </Section>
     </PageContainer>
