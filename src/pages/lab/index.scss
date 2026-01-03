@@ -1,133 +1,53 @@
-/* 使用全局 .page-title 样式 */
+.api-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  padding: 24px;
+}
 
-/* ==================== 基础测试样式 ==================== */
-.token-status {
+.api-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.token-line {
-  font-size: 24px;
-  color: #333;
-  line-height: 1.6;
-  word-break: break-all;
-}
-
-.test-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.response-result {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-
-.response-line {
-  font-size: 24px;
-  color: #000;
-  line-height: 1.6;
-  word-break: break-all;
-}
-
-/* ==================== 列表样式 ==================== */
-.list-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.status-box {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 60px 32px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  justify-content: center;
+  padding: 40px 24px;
+  background: #f5f5f5;
+  border-radius: 16px;
+  transition: all 0.2s;
+
+  &:active {
+    background: #e8e8e8;
+    transform: scale(0.98);
+  }
+}
+
+.api-card-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.api-card-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.api-card-desc {
+  font-size: 24px;
+  color: #999;
   text-align: center;
 }
 
-.status-box--error {
-  background-color: #ffebee;
-}
-
-.status-text {
-  font-size: 28px;
-  color: #666;
-}
-
-.post-list {
+.info-box {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 24px;
 }
 
-.post-item {
-  padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-
-.post-title {
-  display: block;
-  font-size: 30px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 12px;
-}
-
-.post-body {
-  display: block;
-  font-size: 26px;
-  color: #666;
+.info-text {
+  font-size: 28px;
   line-height: 1.6;
-}
-
-/* ==================== 表单样式 ==================== */
-.form-box {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-item {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-label {
-  font-size: 28px;
-  color: #333;
-  font-weight: 500;
-}
-
-.form-input {
-  padding: 16px;
-  font-size: 28px;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  background-color: #fff;
-}
-
-.form-success {
-  font-size: 26px;
-  color: #34c759;
-  text-align: center;
-}
-
-.form-error {
-  font-size: 26px;
-  color: #ff3b30;
-  text-align: center;
+  color: #666;
 }
