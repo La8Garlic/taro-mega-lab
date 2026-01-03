@@ -173,3 +173,25 @@ export const Storage = {
 }
 
 export default Storage
+
+// ============================================================================
+// 同步 Token API（仅供 request.ts 使用）
+// @description request.ts 的 buildHeaders 函数是同步的，需要同步获取 token
+// TODO: 重构 request.ts 支持异步 token 获取后移除
+// ============================================================================
+
+/**
+ * 获取 Token（同步）
+ * @description 从本地存储中同步获取 token，仅供 request.ts 使用
+ * @warning 其他代码请使用 `await Storage.get<string>(StorageKey.TOKEN)`
+ * @returns token 字符串，不存在则返回空字符串
+ */
+export function getToken(): string {
+  try {
+    const data = Taro.getStorageSync(StorageKey.TOKEN)
+    return data || ''
+  } catch {
+    return ''
+  }
+}
+
