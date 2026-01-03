@@ -37,4 +37,15 @@ export default defineAppConfig({
       },
     ],
   },
+  subPackages: [
+    {
+      root: 'subpackages/lab',
+      pages: [
+        'pages/api-index/index',
+        'pages/api-media/index',
+        'pages/api-device/index',
+        'pages/api-file/index',
+      ],
+    },
+  ],
 })
