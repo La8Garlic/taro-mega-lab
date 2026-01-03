@@ -1,6 +1,25 @@
 /* 使用全局 .page-title 样式 */
 /* Section 组件已包含标题和间距样式 */
 
+.scroll-indicator {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0, 122, 255, 0.9);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+
+  &-text {
+    display: block;
+    font-size: 24px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+  }
+}
+
 .card-list {
   display: flex;
   flex-direction: column;

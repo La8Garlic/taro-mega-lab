@@ -1,9 +1,17 @@
 import { View, Text } from '@tarojs/components'
+import { useState } from 'react'
 import { PageContainer, AppCard, AppButton, Section } from '../../components'
-import Taro from '@tarojs/taro'
+import Taro, { usePageScroll } from '@tarojs/taro'
 import './index.scss'
 
 export default function Components() {
+  const [scrollTop, setScrollTop] = useState(0)
+
+  // Taro 专有 Hook - 监听页面滚动
+  usePageScroll((res) => {
+    setScrollTop(res.scrollTop)
+  })
+
   const handleCardClick = (title: string) => {
     console.log(`点击了: ${title}`)
   }
@@ -17,6 +25,11 @@ export default function Components() {
 
   return (
     <PageContainer>
+      {/* 滚动位置指示器 */}
+      <View className='scroll-indicator'>
+        <Text className='scroll-indicator-text'>滚动位置: {Math.round(scrollTop)}px</Text>
+      </View>
+
       <Text className='page-title'>组件 - 组件/布局展示</Text>
 
       <Section title='基础组件'>
